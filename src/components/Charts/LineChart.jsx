@@ -11,9 +11,7 @@ import {
   Filler
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
-import './Charts.css';
 
-// Register Chart.js components
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -26,31 +24,28 @@ ChartJS.register(
 );
 
 const LineChart = ({ stats }) => {
-  // Early return if no data
   if (!stats || stats.length < 2) {
-    return <div className="no-data">Not enough data to display chart</div>;
+    return <div className="text-center text-gray-500 py-4">Not enough data to display chart</div>;
   }
 
   try {
     const homeTeam = stats[0];
     const awayTeam = stats[1];
 
-    // Validate team data
     if (!homeTeam?.team?.name || !awayTeam?.team?.name) {
-      return <div className="no-data">Invalid team data</div>;
+      return <div className="text-center text-gray-500 py-4">Invalid team data</div>;
     }
 
     const statTypes = ['Shots on Goal', 'Total Shots', 'Possession', 'Passes', 'Fouls'];
-    
-    const homeValues = statTypes.map(type => {
-      const stat = homeTeam.statistics?.find(s => s.type === type);
-      return stat ? (typeof stat.value === 'string' ? parseFloat(stat.value) || 0 : stat.value || 0) : 0;
-    });
 
-    const awayValues = statTypes.map(type => {
-      const stat = awayTeam.statistics?.find(s => s.type === type);
-      return stat ? (typeof stat.value === 'string' ? parseFloat(stat.value) || 0 : stat.value || 0) : 0;
-    });
+    const extractValues = (team) =>
+      statTypes.map(type => {
+        const stat = team.statistics?.find(s => s.type === type);
+        return stat ? (typeof stat.value === 'string' ? parseFloat(stat.value) || 0 : stat.value || 0) : 0;
+      });
+
+    const homeValues = extractValues(homeTeam);
+    const awayValues = extractValues(awayTeam);
 
     const chartData = {
       labels: statTypes,
@@ -128,13 +123,9 @@ const LineChart = ({ stats }) => {
           callbacks: {
             label: function(context) {
               let label = context.dataset.label || '';
-              if (label) {
-                label += ': ';
-              }
+              if (label) label += ': ';
               label += context.parsed.y;
-              if (context.label === 'Possession') {
-                label += '%';
-              }
+              if (context.label === 'Possession') label += '%';
               return label;
             }
           }
@@ -143,42 +134,27 @@ const LineChart = ({ stats }) => {
       scales: {
         y: {
           beginAtZero: true,
-          grid: {
-            color: 'rgba(0, 0, 0, 0.05)',
-          },
-          ticks: {
-            font: {
-              size: 12
-            }
-          }
+          grid: { color: 'rgba(0, 0, 0, 0.05)' },
+          ticks: { font: { size: 12 } }
         },
         x: {
-          grid: {
-            display: false,
-          },
-          ticks: {
-            font: {
-              size: 12
-            }
-          }
+          grid: { display: false },
+          ticks: { font: { size: 12 } }
         }
       },
-      interaction: {
-        mode: 'index',
-        intersect: false,
-      }
+      interaction: { mode: 'index', intersect: false }
     };
 
     return (
-      <div className="chart-wrapper">
-        <div className="chart-container">
+      <div className="w-full p-6 bg-white rounded-xl shadow-md">
+        <div className="relative w-full h-[400px] md:h-[300px] sm:h-[250px]">
           <Line data={chartData} options={chartOptions} />
         </div>
       </div>
     );
   } catch (error) {
     console.error('LineChart error:', error);
-    return <div className="no-data">Error rendering chart: {error.message}</div>;
+    return <div className="text-center text-red-600 py-4">Error rendering chart: {error.message}</div>;
   }
 };
 

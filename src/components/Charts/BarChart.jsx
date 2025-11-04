@@ -9,7 +9,6 @@ import {
   Legend
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
-import './Charts.css';
 
 ChartJS.register(
   CategoryScale,
@@ -22,7 +21,7 @@ ChartJS.register(
 
 const BarChart = ({ stats }) => {
   if (!stats || stats.length < 2) {
-    return <div className="no-data">Not enough data to display chart</div>;
+    return <div className="text-center text-gray-500 py-4">Not enough data to display chart</div>;
   }
 
   const homeTeam = stats[0];
@@ -130,8 +129,8 @@ const BarChart = ({ stats }) => {
   };
 
   return (
-    <div className="chart-wrapper">
-      <div className="chart-container">
+    <div className="w-full p-6 bg-white rounded-xl shadow-md">
+      <div className="relative w-full h-[400px] md:h-[300px] sm:h-[250px]">
         <Bar data={data} options={options} />
       </div>
     </div>
@@ -139,4 +138,3 @@ const BarChart = ({ stats }) => {
 };
 
 export default BarChart;
-````

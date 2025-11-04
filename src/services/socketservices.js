@@ -20,7 +20,7 @@ class SocketService {
       reconnectionDelay: 1000,
       reconnectionAttempts: 5
     });
-    
+
     this.socket.on('connect', () => {
       console.log('✅ Connected to WebSocket server');
     });
@@ -34,14 +34,22 @@ class SocketService {
     });
   }
 
+  // ✅ Listen for live matches updates
+  onLiveMatchesUpdate(callback) {
+    if (!this.socket) this.connect();
+    this.on('liveMatchesUpdate', callback);
+  }
+
   joinMatch(matchId) {
     if (this.socket) {
+      console.log(`Joined match room: ${matchId}`);
       this.socket.emit('joinMatch', matchId);
     }
   }
 
   leaveMatch(matchId) {
     if (this.socket) {
+      console.log(`Left match room: ${matchId}`);
       this.socket.emit('leaveMatch', matchId);
     }
   }
@@ -49,8 +57,7 @@ class SocketService {
   on(event, callback) {
     if (this.socket) {
       this.socket.on(event, callback);
-      
-      // Store listener for cleanup
+
       if (!this.listeners.has(event)) {
         this.listeners.set(event, []);
       }
@@ -61,14 +68,11 @@ class SocketService {
   off(event, callback) {
     if (this.socket) {
       this.socket.off(event, callback);
-      
-      // Remove from stored listeners
+
       if (this.listeners.has(event)) {
         const callbacks = this.listeners.get(event);
         const index = callbacks.indexOf(callback);
-        if (index > -1) {
-          callbacks.splice(index, 1);
-        }
+        if (index > -1) callbacks.splice(index, 1);
       }
     }
   }
@@ -81,17 +85,14 @@ class SocketService {
 
   disconnect() {
     if (this.socket) {
-      // Remove all listeners
       this.listeners.forEach((callbacks, event) => {
-        callbacks.forEach(callback => {
-          this.socket.off(event, callback);
-        });
+        callbacks.forEach(cb => this.socket.off(event, cb));
       });
       this.listeners.clear();
-      
+
       this.socket.disconnect();
       this.socket = null;
-      console.log('Socket disconnected and cleaned up');
+      console.log('Socket disconnected & cleaned');
     }
   }
 
