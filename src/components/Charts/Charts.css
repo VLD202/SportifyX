@@ -1,0 +1,41 @@
+.chart-wrapper {
+  width: 100%;
+  padding: var(--spacing-lg);
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+.chart-container {
+  position: relative;
+  height: 400px;
+  width: 100%;
+}
+
+.chart-container canvas {
+  max-height: 400px;
+}
+
+@media (max-width: 768px) {
+  .chart-container {
+    height: 300px;
+  }
+  
+  .chart-container canvas {
+    max-height: 300px;
+  }
+}
+
+@media (max-width: 480px) {
+  .chart-wrapper {
+    padding: var(--spacing-md);
+  }
+  
+  .chart-container {
+    height: 250px;
+  }
+  
+  .chart-container canvas {
+    max-height: 250px;
+  }
+}
