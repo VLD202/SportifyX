@@ -25,7 +25,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // ✅ Routes Import (Spelling fix)
 const matchRoutes = require('./routes/matchRoutes');
-const playerRoutes = require('./routes/playerRoutes'); // fixed spelling
+//const playerRoutes = require('./routes/playerRoutes'); // fixed spelling
 
 app.use('/api/matches', matchRoutes);
 app.use('/api/players', playerRoutes);
